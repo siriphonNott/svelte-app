@@ -56,7 +56,7 @@ jobs:
 
       # Step 8: Run build script
       - name: Build
-        run: npm build # Assumes there's a build script in package.json
+        run: npm run build # Assumes there's a build script in package.json
 
       # Step 9: Deploy built files via FTP
       - name: Deploy via FTP
