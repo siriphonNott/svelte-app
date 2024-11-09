@@ -1,7 +1,12 @@
 <!-- +error.svelte -->
 <script>
+   import '../../app.css';
   import { page } from '$app/stores';
 </script>
+
+<svelte:head>
+	<title>{$page.status}</title>
+</svelte:head>
 
 {#if $page.status === 404}
   <main class="grid min-h-full place-items-center px-6 py-40 sm:py-48 lg:px-8">
