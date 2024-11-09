@@ -11,7 +11,7 @@ const config = {
 	// }
 	kit: {
 		adapter: adapterStatic({
-			fallback: '200.html',
+			fallback: 'index.html',
 		}),
 	}
 };
