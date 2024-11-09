@@ -17,6 +17,9 @@
   const closeMenu = () => {
     mobileMenuOpen = false;
   }
+
+  const apiUrl = import.meta.env.VITE_PUBLIC_API_URL;
+  console.log('API URL:', apiUrl);
 </script>
 
 

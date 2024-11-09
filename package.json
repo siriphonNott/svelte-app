@@ -35,7 +35,8 @@
     "format": "prettier --write .",
     "lint": "prettier --check . && eslint .",
     "test:unit": "vitest",
-    "test": "npm run test:unit -- --run"
+    "test": "npm run test:unit -- --run",
+    "clean": "rm -rf build .svelte-kit node_modules bun.lockb"
   },
   "type": "module"
 }
