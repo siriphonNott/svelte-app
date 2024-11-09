@@ -1,0 +1,71 @@
+name: Deploy production
+run-name: Deploy ${{ github.ref_name }} Build Number (${{ github.run_number }})
+
+on:
+  push:
+    # branches:
+    #   - main # Triggers the action on push to the 'main' branch
+    tags:
+      - v*.*.* # Triggers the action on tag
+      - rollback-v*.*.* # Triggers the action on tag
+env: 
+  GLOBAL_TITLE: Development with GitHub Actions workflow
+
+jobs:
+  build:
+    name: Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the latest code
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Step 2: Set up Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18" # Specify your Node.js version
+      
+      # Step 3: Get build number
+      - name: Set build number
+        run: |
+          echo "BUILD_NUMBER=${{ github.run_number }}" >> $GITHUB_ENV
+          echo "BUILD_NUMBER=${{ github.run_number }}" > build_number.txt
+        
+      
+      # Step 4: Get tag version
+      - name: Get tag version
+        id: get_tag
+        run: echo "TAG_VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
+
+      # Step 5: Load environment variables from file (.env)
+      - name: Set environment variables from Dotenv
+        uses: c-py/action-dotenv-to-setenv@v5
+        with:
+          env-file: ./config/.env.development
+
+      # Step 6: Load environment variables from GitHub Secrets
+      - name: Set environment variables from GitHub Secrets
+        run: |
+          echo "FTP_HOST=${{ secrets.FTP_HOST }}" >> $GITHUB_ENV
+
+      # Step 7: Install dependencies
+      - name: Install dependencies
+        run: npm install
+
+      # Step 8: Run build script
+      - name: Build
+        run: npm build # Assumes there's a build script in package.json
+
+      # Step 9: Deploy built files via FTP
+      - name: Deploy via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./build/ # The local directory where the build output is located (adjust if necessary)
+          server-dir: ${{ secrets.FTP_PATH }} # The remote directory on the server
+          protocol: ftps # Change to 'ftps' for secure FTP if needed
+          dangerous-clean-slate: false # Clears the target directory before deploying

@@ -1,6 +1,8 @@
 <script>
-  console.log('ok2');
-  
+  import { page } from '$app/stores';
 </script>
 
-<h1>Login</h1>
+<div>
+<h1>Profile</h1>
+{$page.params?.user}
+</div>
